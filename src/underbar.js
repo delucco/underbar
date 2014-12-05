@@ -472,6 +472,56 @@ var _ = {};
   //
   // See the Underbar readme for details.
   _.throttle = function(func, wait) {
+	  var alreadyCalled = false;
+	  var calls = [];
+
+	  
+	  var reset = function(){ 
+		  alreadyCalled = false; 
+		  if (calls.length > 1 && calls[1] !== undefined) {
+			  return func.call(this, calls[1]); 
+		  } else if (calls.length > 1) {
+			  return func();
+		  }
+	  }
+	  
+	  return function(){
+//		  var args = _.toArray(arguments);		  
+		  calls.push(arguments);		  	
+		  if (!alreadyCalled){
+			setTimeout(reset, wait);
+			alreadyCalled = true;
+			console.log(calls);
+		  	return func.apply(this, calls[0]);
+		  } 
+	  }
   };
 
 }).call(this);
+
+//________________________________________
+
+// var args = _.toArray(arguments).slice(2);
+// var alreadyOnce = false;
+// var alreadyTwice = false;
+// var start;
+// var end;
+//
+// function reset (){
+//   var alreadyOnce = false;
+//   var alreadyTwice = false;
+// }
+//
+// return function(args) {
+// if (!alreadyOnce) {
+// 	start = new Date();
+// 	alreadyOnce = true;
+// 	setTimeout(reset, wait);
+// 	return func.apply(this, args);
+// } else if (!alreadyTwice) {
+// 	end = new Date();
+// 	alreadyTwice = true;
+// 	return setTimeout(function (){ func.apply(this, args) }, end.getMilliseconds() - start.getMilliseconds());
+// }
+// }
+
